@@ -1,16 +1,22 @@
 class LinkedList
-  attr_reader :first_item
+  attr_reader :first_item, :size
   def initialize(*args)
+    @size = 0
     args.each {|payload| add_item(payload)}
   end
 
   def add_item(payload)
-    return @first_item = LinkedListItem.new(payload) if @first_item.nil?
-    item = @first_item
-    until item.last?
-      item = item.next_list_item
+    if @first_item.nil?
+      @first_item = LinkedListItem.new(payload)
+      @size += 1
+    else
+      item = @first_item
+      until item.last?
+        item = item.next_list_item
+      end
+      item.next_list_item = LinkedListItem.new(payload)
+      @size += 1
     end
-    item.next_list_item = LinkedListItem.new(payload)
   end
 
   def get(index)
@@ -21,16 +27,6 @@ class LinkedList
       item = item.next_list_item
     end
     item.payload
-  end
-
-  def size
-    count = 0
-    item = @first_item
-    until item.nil?
-      item = item.next_list_item
-      count += 1
-    end
-    count
   end
 
   def last
@@ -74,6 +70,7 @@ class LinkedList
     end
     raise IndexError if item.nil?
     item.next_list_item = item.next_list_item.next_list_item
+    @size -= 1
   end
 
   def indexOf(payload)
@@ -121,7 +118,7 @@ class LinkedList
   end
 
   def swap_with_next(index)
-    raise IndexError if index == size - 1
+    raise IndexError if index == @size - 1
     first_payload = get(index)
     second_payload = get( index + 1)
     self[index] = second_payload
